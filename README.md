@@ -7,7 +7,7 @@ A secure anonymous messaging backend application inspired by Sara7a. The applica
 User signup and login
 
 JWT authentication with access & refresh tokens
-
+ 
 Social login (Google)
 
 Email confirmation using OTP
