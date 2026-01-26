@@ -18,17 +18,17 @@ const bootstrap = async (app, express) => {
     app.use(cors(corsOption()))
     app.use(helmet())
     await connectDB();
-    const limiter = rateLimit({
-        windowMs: 5 * 60 * 1000,
-        limit: 5,  
-        message: {  
-            status: 429,
-            message: "Too many requests from this IP, please try again after few minutes",
-        },
-        standardHeaders: true, 
-        legacyHeaders: false, 
-      });
-    app.use(limiter);
+    // const limiter = rateLimit({
+    //     windowMs: 5 * 60 * 1000,
+    //     limit: 5,  
+    //     message: {  
+    //         status: 429,
+    //         message: "Too many requests from this IP, please try again after few minutes",
+    //     },
+    //     standardHeaders: true, 
+    //     legacyHeaders: false, 
+    //   });
+    // app.use(limiter);
 
     attachRouterWriteLogger(app , "/api/v1/auth", authRouter, "auth.log")
     attachRouterWriteLogger(app , "/api/v1/message", messageRouter, "message.log")
@@ -44,7 +44,7 @@ const bootstrap = async (app, express) => {
     app.use("/api/v1/user", userRouter)
 
     app.all("/*dummy", (req, res) => {
-        return res.status(404).json({ Message: "not found handler!!!!!!!!!!!!! " })
+        return res.status(404).json({ Message: "not found handler!!!!!!!!!!!!!" })
     })
 
     app.use(globalErrorHandler)
