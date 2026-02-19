@@ -13,7 +13,7 @@ router.post("/login",validation(loginSchema), authService.Login)
 
 router.patch("/confirm-email",validation(confirmEmailSchema), authService.ConfirmEmail)
 
-router.post("/logout", authentication, authService.Logout)
+router.post("/logout", authentication({tokenType: tokenTypeEnum.ACCESS}), authService.Logout)
 
 router.post("/refresh-token",authentication({tokenType: tokenTypeEnum.REFRESH}) , authService.RefreshToken)
 

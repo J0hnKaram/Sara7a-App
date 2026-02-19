@@ -140,7 +140,7 @@ export const Logout = async (req, res, next) => {
 
     await dbService.create({
         model: TokenModel,
-        data: [{
+          data: [{
             jwtId: req.decoded.jti,
             expiresIn: new Date(req.decoded.exp * 1000),
             userId: req.user._id

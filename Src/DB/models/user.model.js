@@ -77,7 +77,7 @@ const userSchema = new mongoose.Schema({
     profileImage: String,
     coverImage: [String],
     cloudprofileImage: { public_id: String, secure_url: String },
-    cloudcoverImage: [{ public_id: String, secure_url: String }],
+    cloudcoverImage: { public_id: String, secure_url: String },
     confirmEmail: Date,
     confirmEmailOTP: String,
     confirmEmailOTPExpires: Date,

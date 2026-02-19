@@ -19,20 +19,23 @@ router.patch("/update",
 );
 
 
-router.patch("/profile-image",
+router.patch(
+    "/profile-image",
     authentication({ tokenType: tokenTypeEnum.ACCESS }),
     authorization({ accessRole: [roleEnum.USER] }),
-    cloudFileUploadMulter({ validation: [...fileTypes.image] }).single("profileImage"),
+    cloudFileUploadMulter({ validation: ["image/png", "image/jpeg", "image/jpg"] }).single("profileImage"),
     userService.ProfileImage
 );
 
 
 
-router.patch("/cover-image",
+router.patch(
+    "/cover-image",
     authentication({ tokenType: tokenTypeEnum.ACCESS }),
     authorization({ accessRole: [roleEnum.USER] }),
-    cloudFileUploadMulter({ validation: [...fileTypes.image] }).array("coversImage", 5),
-    userService.CoversImage
+    // cloudFileUploadMulter({ validation: [...fileTypes.image] }).array("coverImage"),
+        cloudFileUploadMulter({ validation: ["image/png", "image/jpeg", "image/jpg"] }).single("coverImage"),
+    userService.CoverImage
 );
 
 router.delete("{/:userId}/freeze-account",

@@ -26,7 +26,7 @@ export const updateUserProfile = async (req, res, next) => {
 
     const user = await dbService.findByIdAndUpdate({
         model: UserModel,
-        id: req.decoded.payload.id, 
+        id: req.decoded.id, 
         data: { firstName, lastName, gender },
     });
 
@@ -40,6 +40,9 @@ export const updateUserProfile = async (req, res, next) => {
 }
 
 export const ProfileImage = async (req, res, next) => {
+    if (!req.file) {
+        return next(new Error("Empty file", { cause: 400 }));
+    }
 
     const result = await cloudinaryConfig().uploader.upload(req.file.path, {
         folder: `Sara7aApp/Users/${req.user._id}/profileImage`
@@ -47,49 +50,57 @@ export const ProfileImage = async (req, res, next) => {
 
     const { public_id, secure_url } = result;
 
+    // حذف الصورة القديمة لو موجودة
+    if (req.user.cloudprofileImage) {
+        await cloudinaryConfig().uploader.destroy(req.user.cloudprofileImage);
+    }
+
     const user = await dbService.findByIdAndUpdate({
         model: UserModel,
         id: req.user._id,
-        data: { cloudprofileImage: public_id, secure_url },
-    })
-
-    if (req.user.cloudprofileImage?.public_id) {
-        await cloudinaryConfig().uploader.destroy(
-            req.user.cloudprofileImage.public_id)
-    }
-
+        data: { cloudprofileImage: public_id, profileImageURL: secure_url }, // profileImageURL للفرونت
+    });
 
     return successResponse({
         res,
         statusCode: 200,
         message: "User profile image updated successfully",
-        data: { user },
-    })
-}
+        data: { profileImageURL: secure_url }, // الرد للفرونت يكون اللينك مباشرة
+    });
+};
 
-export const CoversImage = async (req, res, next) => {    
-    const attachments = [];
-    for (const file of req.files) {
-      const {public_id, secure_url} = await cloudinaryConfig().uploader.upload(file.path, {
-        folder: `Sara7aApp/Users/${req.user._id}/coversImage`,
-      });
-      attachments.push({public_id, secure_url});
+export const CoverImage = async (req, res, next) => {
+    if (!req.file) {
+        return next(new Error("Empty file", { cause: 400 }));
     }
 
+    const result = await cloudinaryConfig().uploader.upload(req.file.path, {
+        folder: `Sara7aApp/Users/${req.user._id}/coverImage`
+    });
+
+    const { public_id, secure_url } = result;
+
+    // حذف الصورة القديمة لو موجودة
+    if (req.user.cloudcoverImage) {
+        await cloudinaryConfig().uploader.destroy(req.user.cloudcoverImage);
+    }
+
+    // تحديث قاعدة البيانات بالـ public_id
     const user = await dbService.findByIdAndUpdate({
-      model: UserModel,
-      id: req.user._id,
-      data: { cloudcoverImage: attachments },
+        model: UserModel,
+        id: req.user._id,
+        data: { cloudcoverImage: public_id, coverImage: secure_url },
     });
 
+    // الرد للفرونت يكون اللينك فقط
     return successResponse({
-      res,
-      statusCode: 200,
-      message: "User covers images updated successfully",
-      data: { user },
+        res,
+        statusCode: 200,
+        message: "User cover image updated successfully",
+        data: { coverImageURL: secure_url },
     });
-
 };
+
 
 export const freezeAccount = async (req, res, next) => {
     const { userId } = req.params;

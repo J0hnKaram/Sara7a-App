@@ -1,4 +1,4 @@
-export const template = (code, firstName ,subject ) => `<!DOCTYPE html>
+export const template = (code, firstName ,subject = "Confirm your email" ) => `<!DOCTYPE html>
 <html>
 <head>
     <style>
